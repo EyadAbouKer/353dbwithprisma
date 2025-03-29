@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ClubMembers from "@/components/ClubMembers";
+import ClubMembersV2 from "@/components/ClubMembersV2";
 
 export default function Home() {
   //example Data
@@ -47,6 +48,11 @@ export default function Home() {
         <div>
           <ClubMembers />
         </div>
+        {/* <div>
+          <ClubMembersV2 />
+          <ClubMembersV2 />
+
+        </div> */}
       </main>
 
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center"></footer>
