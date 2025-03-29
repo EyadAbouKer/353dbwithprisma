@@ -19,7 +19,8 @@ import PlayerList from "@/components/PlayerList";
 import SecondaryFamilyMembers from "@/components/SecondaryFamilyMembers";
 import Session from "@/components/Session";
 import TeamInformation from "@/components/TeamInformation";
-
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   //example Data
@@ -50,10 +51,16 @@ export default function Home() {
         <div>
           <h1>Club Members</h1>
           <ClubMembers />
+
+          <Link href="/addentries" passHref>
+            <Button asChild>
+              <span>Add</span>
+            </Button>
+          </Link>
         </div>
         <div>
           <h1>Family Members</h1>
-        <FamilyMembers />
+          <FamilyMembers />
         </div>
         <div>
           <h1>Family Relationships</h1>
