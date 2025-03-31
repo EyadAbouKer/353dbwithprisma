@@ -11,7 +11,7 @@ import {
 
 export default async function TeamInformation() {
   const teams = await prisma.teaminformation.findMany();
-  console.log(teams);
+  // console.log(teams);
 
   const allTeams = teams.map((team) => (
     <TableRow key={team.TeamID}>

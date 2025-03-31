@@ -11,7 +11,7 @@ import {
 
 export default async function Locations() {
   const locations = await prisma.locations.findMany();
-  console.log(locations);
+  // console.log(locations);
 
   const allLocations = locations.map((location) => (
     <TableRow key={location.LocationID}>

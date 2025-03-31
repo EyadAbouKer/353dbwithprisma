@@ -11,7 +11,7 @@ import {
 
 export default async function Personnel() {
   const personnel = await prisma.personnel.findMany();
-  console.log(personnel);
+  // console.log(personnel);
 
   const allPersonnel = personnel.map((person) => (
     <TableRow key={person.PersonnelID}>

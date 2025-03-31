@@ -11,7 +11,7 @@ import {
 
 export default async function SecondaryFamilyMembers() {
   const secondaryMembers = await prisma.secondaryfamilymember.findMany();
-  console.log(secondaryMembers);
+  // console.log(secondaryMembers);
 
   const allSecondaryMembers = secondaryMembers.map((member) => (
     <TableRow key={member.SecondaryID}>

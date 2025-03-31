@@ -11,7 +11,7 @@ import {
 
 export default async function Payments() {
   const payments = await prisma.payments.findMany();
-  console.log(payments);
+  // console.log(payments);
 
   const allPayments = payments.map((payment) => (
     <TableRow key={payment.PaymentID}>

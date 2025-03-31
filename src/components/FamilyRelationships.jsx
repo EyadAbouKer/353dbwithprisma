@@ -11,7 +11,7 @@ import {
 
 export default async function FamilyRelationships() {
   const familyRelationships = await prisma.familyrelationships.findMany();
-  console.log(familyRelationships);
+  // console.log(familyRelationships);
 
   const allFamilyRelationships = familyRelationships.map((relationship) => (
     <TableRow key={relationship.RelationshipID}>

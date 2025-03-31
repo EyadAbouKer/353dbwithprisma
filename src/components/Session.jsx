@@ -11,7 +11,7 @@ import {
 
 export default async function Session() {
   const sessions = await prisma.session.findMany();
-  console.log(sessions);
+  // console.log(sessions);
 
   const allSessions = sessions.map((session) => (
     <TableRow key={session.SessionID}>

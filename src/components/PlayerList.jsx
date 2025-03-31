@@ -11,7 +11,7 @@ import {
 
 export default async function PlayerList() {
   const playersList = await prisma.playerslist.findMany();
-  console.log(playersList);
+  // console.log(playersList);
 
   const allPlayers = playersList.map((player) => (
     <TableRow key={`${player.ClubMemberID}-${player.TeamID}`}>
