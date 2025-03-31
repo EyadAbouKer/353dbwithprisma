@@ -28,17 +28,18 @@ import { Calendar as CalendarIcon } from "lucide-react"
 const formSchema = z.object({
   FirstName: z.string().min(1),
   LastName: z.string().min(1),
-  LocationID: z.number().min(0).max(9999).optional(),
-  Status: z.string().min(1).optional(),
+  // LocationID: z.number().min(0).max(9999).optional(),
+  // Status: z.string().min(1).optional(),
   DOB: z.coerce.date().optional(),
-  SIN: z.number().min(0).max(999999999),
+  SIN: z.string(),
   MedicareNumber: z.string().min(1),
   Email: z.string().optional(),
   Address: z.string().min(1).optional(),
   City: z.string().min(1).optional(),
   Province: z.string().min(1).optional(),
-  clubmembers: z.string().min(1),
-  familyrelationships: z.string().min(1).optional()
+  PostalCode: z.string().min(1).optional(),
+  // clubmembers: z.string().min(1),
+  // familyrelationships: z.string().min(1).optional()
 });
 
 export default function RegisterFamilyMember() {
@@ -106,7 +107,7 @@ export default function RegisterFamilyMember() {
             />
           </div>
         </div>
-        <div className="grid grid-cols-12 gap-4">
+        {/* <div className="grid grid-cols-12 gap-4">
           <div className="col-span-4">
             <FormField
               control={form.control}
@@ -127,8 +128,8 @@ export default function RegisterFamilyMember() {
               )}
             />
           </div>
-        </div>
-        <FormField
+        </div> */}
+        {/* <FormField
           control={form.control}
           name="Status"
           render={({ field }) => (
@@ -144,7 +145,7 @@ export default function RegisterFamilyMember() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <FormField
           control={form.control}
           name="DOB"
@@ -291,8 +292,27 @@ export default function RegisterFamilyMember() {
               )}
             />
           </div>
+          <div className="col-span-4">
+            <FormField
+              control={form.control}
+              name="PostalCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>PostalCode</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="PostalCode"
+                      type="text"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
-        <FormField
+        {/* <FormField
           control={form.control}
           name="clubmembers"
           render={({ field }) => (
@@ -324,7 +344,7 @@ export default function RegisterFamilyMember() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

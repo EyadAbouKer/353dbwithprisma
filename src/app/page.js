@@ -52,7 +52,7 @@ export default function Home() {
           <h1>Club Members</h1>
           <ClubMembers />
 
-          <Link href="/addentries" passHref>
+          <Link href="/addfamilymember" passHref>
             <Button asChild>
               <span>Add</span>
             </Button>

@@ -28,8 +28,8 @@ return (
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                     {/* <NavigationMenuLink href='/'>Club Member?</NavigationMenuLink> */}
-                    <NavigationMenuLink href='/addentries'>Family Member</NavigationMenuLink>
-                    <NavigationMenuLink href='/'>Location</NavigationMenuLink>
+                    <NavigationMenuLink href='/addfamilymember'>Family Member</NavigationMenuLink>
+                    <NavigationMenuLink href='/addlocation'>Location</NavigationMenuLink>
                     <NavigationMenuLink href='/'>Payment</NavigationMenuLink>
                     <NavigationMenuLink href='/'>Personnel</NavigationMenuLink>
                     <NavigationMenuLink href='/'>Personnel</NavigationMenuLink>
