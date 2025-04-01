@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { parse } from "date-fns";
 const prisma = new PrismaClient();
 
+// __________________________________________LOCATION__________________________________________________
 export async function addLocation(formData) {
   try {
     const result = await prisma.locations
@@ -28,6 +29,7 @@ export async function addLocation(formData) {
   }
 }
 
+// __________________________________________FAMILYMEMBERS__________________________________________________
 //need to show error if operation get rejected by the db to the UI
 export async function addFamilyMember(formData) {
   try {
@@ -84,4 +86,43 @@ async function update_ClubMember_FamilyMember_Relationship(familyMemberID, ClubM
         console.error("Error adding family relationship:", error);
         return { success: false, error: error.message };
     }
+}
+
+
+
+
+// __________________________________________PAYMENTS__________________________________________________
+// someone come to pay --> check ID if valid (can it be checked without going to the db?)
+// check age if over 18 on payment date --> if yes --> set status to inactive (not very important)
+// if sum of all payments for a given id is over 100, mark it as excess donation.
+// ATTENTION: need to add logic for Date here
+export async function addPayment(formData) {
+  try {
+    // Check if the family member exists
+    const id = await prisma.clubmembers.findUnique({
+      where: { ClubMemberID: parseInt(formData.ClubMemberID) },
+    });
+
+    if (!id) {
+      console.log("club member ID not found");
+      return { success: false, error: "club member ID not found" };
+    }
+
+    // Create a new payment
+    const result = await prisma.payments.create({
+      data: {
+        Amount: parseFloat(formData.Amount),
+        PaymentDate: formData.PaymentDate,
+        Method: formData.Method,
+        ClubMemberID: parseInt(formData.ClubMemberID),
+        InstallmentNumber: parseInt(formData.InstallmentNumber),
+      },
+    });
+
+    console.log("Payment added to the database:", result);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Error adding payment:", error);
+    return { success: false, error: error.message };
+  }
 }

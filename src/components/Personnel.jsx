@@ -18,7 +18,7 @@ export default async function Personnel() {
       <TableCell>{person.FirstName}</TableCell>
       <TableCell>{person.LastName}</TableCell>
       <TableCell>{person.Mandate}</TableCell>
-      <TableCell>{person.DOB.toISOString().split('T')[0]}</TableCell>
+      <TableCell>{person.DOB ? person.DOB.toISOString().split('T')[0] : "N/A"}</TableCell>
       <TableCell>{person.SIN}</TableCell>
       <TableCell>{person.MedicareNumber}</TableCell>
       <TableCell>{person.Phone}</TableCell>

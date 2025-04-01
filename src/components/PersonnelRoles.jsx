@@ -24,7 +24,7 @@ export default async function PersonnelRoles() {
       <TableCell>{role.LocationID}</TableCell>
       <TableCell>{role.locations.Name}</TableCell>
       <TableCell>{role.Role}</TableCell>
-      <TableCell>{role.StartDate.toISOString().split('T')[0]}</TableCell>
+      <TableCell>{role.StartDate ? role.StartDate.toISOString().split('T')[0] : 'N/A'}</TableCell>
       <TableCell>{role.EndDate ? role.EndDate.toISOString().split('T')[0] : 'Active'}</TableCell>
     </TableRow>
   ));

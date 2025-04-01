@@ -17,7 +17,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 import {
@@ -29,29 +33,25 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { addPayment } from "@/actions/actions"; 
+
 
 const formSchema = z.object({
   ClubMemberID: z.string().min(1),
   PaymentDate: z.coerce.date().optional(),
-  Amount: z.number(),
+  Amount: z.string(),
   Method: z.string().optional(),
   MembershipStartDate: z.coerce.date().optional(),
-  name_3MembershipEndDate31931579: z.coerce.date().optional(),
+  MembershipEndDate: z.coerce.date().optional(),
   InstallmentNumber: z.string().min(1).optional(),
   ExcessDonation: z.string().min(1).optional(),
 });
 
 export default function RegisterPayment() {
-  const languages = [
-    { label: "English", value: "en" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-    { label: "Spanish", value: "es" },
-    { label: "Portuguese", value: "pt" },
-    { label: "Russian", value: "ru" },
-    { label: "Japanese", value: "ja" },
-    { label: "Korean", value: "ko" },
-    { label: "Chinese", value: "zh" },
+  const methods = [
+    { label: "Credit Card", value: "Credit" },
+    { label: "Debit Card", value: "Debit" },
+    { label: "Cash", value: "Cash" },
   ];
 
   const form = useForm({
@@ -59,13 +59,20 @@ export default function RegisterPayment() {
     defaultValues: {
       PaymentDate: new Date(),
       MembershipStartDate: new Date(),
-      name_3MembershipEndDate31931579: new Date(),
+      MembershipEndDate: new Date(),
     },
   });
 
   function onSubmit(values) {
     try {
       console.log(values);
+      const result = addPayment(values);
+      console.log("Payment added to the database:", result);
+      if (result) {
+        toast.success("Payment added successfully!");
+      } else {
+        toast.error("Payment not added successfully!");
+      }
       toast(
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(values, null, 2)}</code>
@@ -79,7 +86,10 @@ export default function RegisterPayment() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 max-w-3xl mx-auto py-10"
+      >
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-6">
             <FormField
@@ -115,13 +125,22 @@ export default function RegisterPayment() {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
                   <FormDescription>PaymentDate</FormDescription>
@@ -156,7 +175,7 @@ export default function RegisterPayment() {
               name="Method"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Method</FormLabel>
+                  <FormLabel>Payment Method</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -169,33 +188,37 @@ export default function RegisterPayment() {
                           )}
                         >
                           {field.value
-                            ? languages.find((language) => language.value === field.value)?.label
-                            : "Select language"}
+                            ? methods.find(
+                                (method) => method.value === field.value
+                              )?.label
+                            : "Select Method"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-0">
                       <Command>
-                        <CommandInput placeholder="Search language..." />
+                        <CommandInput placeholder="Search ..." />
                         <CommandList>
-                          <CommandEmpty>No language found.</CommandEmpty>
+                          <CommandEmpty>not valid payment.</CommandEmpty>
                           <CommandGroup>
-                            {languages.map((language) => (
+                            {methods.map((method) => (
                               <CommandItem
-                                value={language.label}
-                                key={language.value}
+                                value={method.label}
+                                key={method.value}
                                 onSelect={() => {
-                                  form.setValue("Method", language.value);
+                                  form.setValue("Method", method.value);
                                 }}
                               >
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
-                                    language.value === field.value ? "opacity-100" : "opacity-0"
+                                    method.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
                                   )}
                                 />
-                                {language.label}
+                                {method.label}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -203,7 +226,6 @@ export default function RegisterPayment() {
                       </Command>
                     </PopoverContent>
                   </Popover>
-                  <FormDescription>Method</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -229,16 +251,27 @@ export default function RegisterPayment() {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
-                  <FormDescription>must be done by code, remove this later</FormDescription>
+                  <FormDescription>
+                    must be done by code, remove this later
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -248,7 +281,7 @@ export default function RegisterPayment() {
           <div className="col-span-6">
             <FormField
               control={form.control}
-              name="name_3MembershipEndDate31931579"
+              name="MembershipEndDate"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>MembershipEndDate</FormLabel>
@@ -262,13 +295,22 @@ export default function RegisterPayment() {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
                   <FormDescription>MembershipEndDate</FormDescription>

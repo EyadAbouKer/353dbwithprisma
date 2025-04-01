@@ -17,7 +17,7 @@ export default async function ClubMembers() {
       <TableCell>{member.ClubMemberID}</TableCell>
       <TableCell>{member.FirstName}</TableCell>
       <TableCell>{member.LastName}</TableCell>
-      <TableCell>{member.DOB.toISOString().split("T")[0]}</TableCell>
+      <TableCell>{member.DOB ? member.DOB.toISOString().split("T")[0] : "N/A"}</TableCell>
       <TableCell>{member.Height ?? "N/A"}</TableCell>
       <TableCell>{member.Weight ?? "N/A"}</TableCell>
       <TableCell>{member.SIN}</TableCell>
