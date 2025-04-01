@@ -209,30 +209,6 @@ model emaillog {
   BodyPreview    String?   @db.VarChar(100)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ------------------------------------------------------------------------------------------
-
 enum personnelroles_Role {
   Administrator
   Captain

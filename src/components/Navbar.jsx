@@ -30,7 +30,7 @@ return (
                     {/* <NavigationMenuLink href='/'>Club Member?</NavigationMenuLink> */}
                     <NavigationMenuLink href='/addfamilymember'>Family Member</NavigationMenuLink>
                     <NavigationMenuLink href='/addlocation'>Location</NavigationMenuLink>
-                    <NavigationMenuLink href='/'>Payment</NavigationMenuLink>
+                    <NavigationMenuLink href='/addPayments'>Payment</NavigationMenuLink>
                     <NavigationMenuLink href='/'>Personnel</NavigationMenuLink>
                     <NavigationMenuLink href='/'>Personnel</NavigationMenuLink>
                     <NavigationMenuLink href='/'>Personnel</NavigationMenuLink>

@@ -1,11 +1,11 @@
-"use client"
-import { useState } from "react"
-import { toast } from "sonner"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,16 +14,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { format } from "date-fns"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { Calendar as CalendarIcon } from "lucide-react"
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { addFamilyMember } from "@/actions/actions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   FirstName: z.string().min(1),
@@ -38,6 +46,9 @@ const formSchema = z.object({
   City: z.string().min(1).optional(),
   Province: z.string().min(1).optional(),
   PostalCode: z.string().min(1).optional(),
+  ClubMemberID: z.string().min(1).optional(),
+  Phone: z.string().min(1).optional(),
+  Relationship: z.string().min(1).optional(),
   // clubmembers: z.string().min(1),
   // familyrelationships: z.string().min(1).optional()
 });
@@ -46,13 +57,19 @@ export default function RegisterFamilyMember() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      DOB: new Date()
+      DOB: new Date(),
     },
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     try {
       console.log(values);
+      const result = await addFamilyMember(values);
+      if (result.success) {
+        toast.success("Family member added successfully!");
+      } else {
+        toast.error("Failed to add family member: " + result.error);
+      }
       toast(
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(values, null, 2)}</code>
@@ -66,7 +83,10 @@ export default function RegisterFamilyMember() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 max-w-3xl mx-auto py-10"
+      >
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-6">
             <FormField
@@ -76,10 +96,7 @@ export default function RegisterFamilyMember() {
                 <FormItem>
                   <FormLabel>FirstName</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="FirstName*"
-                      {...field} 
-                    />
+                    <Input placeholder="FirstName*" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,11 +111,7 @@ export default function RegisterFamilyMember() {
                 <FormItem>
                   <FormLabel>LastName</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="LastName"
-                      type="text"
-                      {...field} 
-                    />
+                    <Input placeholder="LastName" type="text" {...field} />
                   </FormControl>
                   <FormDescription>LastName</FormDescription>
                   <FormMessage />
@@ -107,45 +120,57 @@ export default function RegisterFamilyMember() {
             />
           </div>
         </div>
-        {/* <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-4">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-6">
             <FormField
               control={form.control}
-              name="LocationID"
+              name="ClubMemberID"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>LocationID</FormLabel>
+                  <FormLabel>ClubMemberID</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="LocationID"
-                      type="number"
-                      {...field} 
-                    />
+                    <Input placeholder="ClubMemberID" type="text" {...field} />
                   </FormControl>
-                  <FormDescription>LocationID</FormDescription>
+                  <FormDescription>ClubMemberID</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-        </div> */}
-        {/* <FormField
-          control={form.control}
-          name="Status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Status"
-                  {...field} 
-                />
-              </FormControl>
-              <FormDescription>Status</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
+          <div className="col-span-6">
+            <FormField
+              control={form.control}
+              name="Relationship"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Relationship</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a relationship" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Father">Father</SelectItem>
+                      <SelectItem value="Mother">Mother</SelectItem>
+                      <SelectItem value="Grandfather">Grandfather</SelectItem>
+                      <SelectItem value="Grandmother">Grandmother</SelectItem>
+                      <SelectItem value="Uncle">Uncle</SelectItem>
+                      <SelectItem value="Ant">Ant</SelectItem>
+                      <SelectItem value="Tutor">Tutor</SelectItem>
+                      <SelectItem value="Partner">Partner</SelectItem>
+                      <SelectItem value="Friend">Friend</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Select the family relationship</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
         <FormField
           control={form.control}
           name="DOB"
@@ -191,11 +216,7 @@ export default function RegisterFamilyMember() {
             <FormItem>
               <FormLabel>SIN</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="SIN"
-                  type="number"
-                  {...field} 
-                />
+                <Input placeholder="SIN" type="number" {...field} />
               </FormControl>
               <FormDescription>SIN</FormDescription>
               <FormMessage />
@@ -209,10 +230,7 @@ export default function RegisterFamilyMember() {
             <FormItem>
               <FormLabel>MedicareNumber</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="MedicareNumber"
-                  {...field} 
-                />
+                <Input placeholder="MedicareNumber" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -225,11 +243,20 @@ export default function RegisterFamilyMember() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="Email"
-                  type="email"
-                  {...field} 
-                />
+                <Input placeholder="Email" type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="Phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <Input placeholder="Phone" type="Phone" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -244,10 +271,7 @@ export default function RegisterFamilyMember() {
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Address"
-                      {...field} 
-                    />
+                    <Input placeholder="Address" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -262,11 +286,7 @@ export default function RegisterFamilyMember() {
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="City"
-                      type="text"
-                      {...field} 
-                    />
+                    <Input placeholder="City" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -281,11 +301,7 @@ export default function RegisterFamilyMember() {
                 <FormItem>
                   <FormLabel>Province</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Province"
-                      type="text"
-                      {...field} 
-                    />
+                    <Input placeholder="Province" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -300,11 +316,7 @@ export default function RegisterFamilyMember() {
                 <FormItem>
                   <FormLabel>PostalCode</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="PostalCode"
-                      type="text"
-                      {...field} 
-                    />
+                    <Input placeholder="PostalCode" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -348,5 +360,5 @@ export default function RegisterFamilyMember() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  )
+  );
 }
