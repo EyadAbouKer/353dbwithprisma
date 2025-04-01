@@ -10,13 +10,19 @@ import {
 } from "@/components/ui/table";
 
 export default async function PersonnelRoles() {
-  const personnelRoles = await prisma.personnelroles.findMany();
-  // console.log(personnelRoles);
+  const personnelRoles = await prisma.personnelroles.findMany({
+    include: {
+      personnel: true,
+      locations: true,
+    }
+  });
 
   const allPersonnelRoles = personnelRoles.map((role) => (
     <TableRow key={`${role.PersonnelID}-${role.LocationID}-${role.Role}-${role.StartDate}`}>
       <TableCell>{role.PersonnelID}</TableCell>
+      <TableCell>{role.personnel.FirstName} {role.personnel.LastName}</TableCell>
       <TableCell>{role.LocationID}</TableCell>
+      <TableCell>{role.locations.Name}</TableCell>
       <TableCell>{role.Role}</TableCell>
       <TableCell>{role.StartDate.toISOString().split('T')[0]}</TableCell>
       <TableCell>{role.EndDate ? role.EndDate.toISOString().split('T')[0] : 'Active'}</TableCell>
@@ -28,8 +34,10 @@ export default async function PersonnelRoles() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Personnel ID</TableHead>
+            <TableHead>ID</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Location ID</TableHead>
+            <TableHead>Location Name</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Start Date</TableHead>
             <TableHead>End Date</TableHead>

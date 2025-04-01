@@ -10,17 +10,19 @@ import {
 import ClubMembers from "@/components/ClubMembers";
 import ClubMembersV2 from "@/components/ClubMembersV2";
 import FamilyMembers from "@/components/Familymembers";
-import FamilyRelationships from "@/components/FamilyRelationships";
+import Primaryfamilyrelationships from "@/components/Primaryfamilyrelationships";
 import Locations from "@/components/Locations";
 import Payments from "@/components/Payments";
 import Personnel from "@/components/Personnel";
 import PersonnelRoles from "@/components/PersonnelRoles";
 import PlayerList from "@/components/PlayerList";
 import SecondaryFamilyMembers from "@/components/SecondaryFamilyMembers";
+import Secondaryfamilyrelationships from "@/components/Secondaryfamilyrelationships";
 import Session from "@/components/Session";
 import TeamInformation from "@/components/TeamInformation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import EmailLog from "@/components/EmailLog";
 
 export default function Home() {
   //example Data
@@ -64,7 +66,7 @@ export default function Home() {
         </div>
         <div>
           <h1>Family Relationships</h1>
-          <FamilyRelationships />
+          <Primaryfamilyrelationships />
         </div>
         <div>
           <h1>Locations</h1>
@@ -91,12 +93,20 @@ export default function Home() {
           <SecondaryFamilyMembers />
         </div>
         <div>
+          <h1>Secondary Family Relationships</h1>
+          <Secondaryfamilyrelationships />
+        </div>
+        <div>
           <h1>Session</h1>
           <Session />
         </div>
         <div>
           <h1>Team Information</h1>
           <TeamInformation />
+        </div>
+        <div>
+          <h1>EmailLog</h1>
+          <EmailLog />
         </div>
       </main>
 

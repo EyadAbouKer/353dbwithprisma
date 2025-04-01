@@ -10,9 +10,8 @@ import {
 } from "@/components/ui/table";
 
 export default async function Session() {
-  const sessions = await prisma.session.findMany();
-  // console.log(sessions);
-
+  const sessions = await prisma.sessions.findMany();
+  
   const allSessions = sessions.map((session) => (
     <TableRow key={session.SessionID}>
       <TableCell>{session.SessionID}</TableCell>
@@ -27,6 +26,7 @@ export default async function Session() {
       <TableCell>{session.ScoreTeam1 ?? "N/A"}</TableCell>
       <TableCell>{session.ScoreTeam2 ?? "N/A"}</TableCell>
       <TableCell>{session.GenderMatch ?? "N/A"}</TableCell>
+      <TableCell>{session.Type ?? "N/A"}</TableCell>
     </TableRow>
   ));
 
@@ -43,6 +43,7 @@ export default async function Session() {
             <TableHead>Team 1 Score</TableHead>
             <TableHead>Team 2 Score</TableHead>
             <TableHead>Gender Match</TableHead>
+            <TableHead>Type</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

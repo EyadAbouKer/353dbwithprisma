@@ -10,14 +10,19 @@ import {
 } from "@/components/ui/table";
 
 export default async function PlayerList() {
-  const playersList = await prisma.playerslist.findMany();
-  // console.log(playersList);
+  const playersList = await prisma.playerslist.findMany({
+    include: {
+      sessions: true
+    }
+  });
 
   const allPlayers = playersList.map((player) => (
-    <TableRow key={`${player.ClubMemberID}-${player.TeamID}`}>
+    <TableRow key={`${player.ClubMemberID}-${player.SessionID}`}>
       <TableCell>{player.ClubMemberID}</TableCell>
       <TableCell>{player.TeamID}</TableCell>
       <TableCell>{player.Role}</TableCell>
+      <TableCell>{player.SessionID}</TableCell>
+      <TableCell>{player.sessions.Date?.toLocaleDateString()}</TableCell>
     </TableRow>
   ));
 
@@ -29,6 +34,8 @@ export default async function PlayerList() {
             <TableHead>Club Member ID</TableHead>
             <TableHead>Team ID</TableHead>
             <TableHead>Role</TableHead>
+            <TableHead>Session ID</TableHead>
+            <TableHead>Session Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

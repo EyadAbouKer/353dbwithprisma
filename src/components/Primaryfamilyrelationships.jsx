@@ -9,16 +9,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default async function FamilyRelationships() {
-  const familyRelationships = await prisma.familyrelationships.findMany();
-  // console.log(familyRelationships);
+export default async function Primaryfamilyrelationships() {
+  const familyRelationships = await prisma.primaryfamilyrelationships.findMany({
+    include: {
+      familymembers: true,
+      clubmembers: true,
+    },
+  });
 
   const allFamilyRelationships = familyRelationships.map((relationship) => (
-    <TableRow key={relationship.RelationshipID}>
-      <TableCell>{relationship.RelationshipID}</TableCell>
+    <TableRow key={`${relationship.FamilyMemberID}-${relationship.ClubMemberID}`}>
       <TableCell>{relationship.FamilyMemberID}</TableCell>
       <TableCell>{relationship.ClubMemberID}</TableCell>
       <TableCell>{relationship.Relationship}</TableCell>
+      <TableCell>{relationship.familymembers.Name}</TableCell>
+      <TableCell>{relationship.clubmembers.Name}</TableCell>
     </TableRow>
   ));
 
@@ -27,10 +32,11 @@ export default async function FamilyRelationships() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Relationship ID</TableHead>
             <TableHead>Family Member ID</TableHead>
             <TableHead>Club Member ID</TableHead>
             <TableHead>Relationship</TableHead>
+            <TableHead>Family Member Name</TableHead>
+            <TableHead>Club Member Name</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

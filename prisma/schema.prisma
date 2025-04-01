@@ -8,203 +8,240 @@ datasource db {
 }
 
 model clubmembers {
-  ClubMemberID        Int                   @id @unique(map: "id_UNIQUE") @default(autoincrement()) @db.UnsignedInt
-  FirstName           String                @db.VarChar(45)
-  LastName            String                @db.VarChar(45)
-  DOB                 DateTime              @db.Date
-  Age                 Int                   @db.UnsignedInt
-  Height              Int?                  @db.UnsignedInt
-  Weight              Int?                  @db.UnsignedInt
-  SIN                 String                @unique(map: "sin_UNIQUE") @db.VarChar(11)
-  MedicareNumber      String                @unique(map: "medicalnumber_UNIQUE") @db.VarChar(10)
-  Phone               String                @db.VarChar(12)
-  Address             String                @db.VarChar(45)
-  City                String?               @db.VarChar(45)
-  Province            String                @db.VarChar(45)
-  Postalcode          String                @db.VarChar(45)
-  FamilyMemberID      Int
-  Status              clubmembers_Status
-  TeamID              Int?
-  teaminformation     teaminformation?      @relation(fields: [TeamID], references: [TeamID], onDelete: Restrict, map: "fk_TeamID_ClubMembers")
-  familymembers       familymembers         @relation(fields: [FamilyMemberID], references: [FamilyMemberID], map: "fk_familyMember")
-  familyrelationships familyrelationships[]
-  payments            payments[]
-  playerslist         playerslist[]
+  ClubMemberID                 Int                            @id @unique(map: "id_UNIQUE") @default(autoincrement()) @db.UnsignedInt
+  FirstName                    String?                        @db.VarChar(45)
+  LastName                     String?                        @db.VarChar(45)
+  DOB                          DateTime?                      @db.Date
+  Height                       Int?                           @db.UnsignedInt
+  Weight                       Int?                           @db.UnsignedInt
+  SIN                          String?                        @unique(map: "sin_UNIQUE") @db.VarChar(11)
+  MedicareNumber               String?                        @unique(map: "medicalnumber_UNIQUE") @db.VarChar(10)
+  Phone                        String?                        @unique(map: "Phone_UNIQUE") @db.VarChar(12)
+  Address                      String?                        @db.VarChar(45)
+  City                         String?                        @db.VarChar(45)
+  Province                     String?                        @db.VarChar(45)
+  Postalcode                   String?                        @db.VarChar(45)
+  Status                       clubmembers_Status?            @default(Inactive)
+  Gender                       clubmembers_Gender?
+  LocationID                   Int?
+  locations                    locations?                     @relation(fields: [LocationID], references: [LocationID], onDelete: NoAction, onUpdate: NoAction, map: "fk_location_clubMember")
+  payments                     payments[]
+  playerslist                  playerslist[]
+  primaryfamilyrelationships   primaryfamilyrelationships[]
+  secondaryfamilyrelationships secondaryfamilyrelationships[]
 
-  @@index([TeamID], map: "fk_TeamID_ClubMembers")
-  @@index([FamilyMemberID], map: "fk_familyMembrID_clubMembers")
+  @@index([LocationID], map: "fk_location_clubMember_idx")
 }
 
 model familymembers {
-  FamilyMemberID      Int                   @id @default(autoincrement())
-  FirstName           String                @db.VarChar(45)
-  LastName            String                @db.VarChar(45)
-  LocationID          Int
-  Status              familymembers_Status
-  DOB                 DateTime              @db.Date
-  SIN                 String                @unique(map: "SIN") @db.VarChar(45)
-  MedicareNumber      String                @unique(map: "MedicareNumber") @db.VarChar(45)
-  Address             String                @db.VarChar(45)
-  City                String                @db.VarChar(45)
-  Province            String                @db.VarChar(45)
-  Email               String                @unique(map: "Email") @db.VarChar(45)
-  Phone               String                @unique(map: "Phone") @db.VarChar(12)
-  Postalcode          String                @db.VarChar(45)
-  clubmembers         clubmembers[]
-  locations           locations             @relation(fields: [LocationID], references: [LocationID], map: "fk_familyMembers_Location")
-  familyrelationships familyrelationships[]
-
-  @@index([LocationID], map: "fk_familyMembers_Location")
+  FamilyMemberID             Int                          @id @default(autoincrement())
+  FirstName                  String?                      @db.VarChar(45)
+  LastName                   String?                      @db.VarChar(45)
+  DOB                        DateTime?                    @db.Date
+  SIN                        String?                      @unique(map: "SIN") @db.VarChar(45)
+  MedicareNumber             String?                      @unique(map: "MedicareNumber") @db.VarChar(45)
+  Address                    String?                      @db.VarChar(45)
+  City                       String?                      @db.VarChar(45)
+  Province                   String?                      @db.VarChar(45)
+  Email                      String?                      @unique(map: "Email") @db.VarChar(45)
+  Phone                      String?                      @unique(map: "Phone") @db.VarChar(12)
+  Postalcode                 String?                      @db.VarChar(45)
+  primaryfamilyrelationships primaryfamilyrelationships[]
 }
 
-model familyrelationships {
-  RelationshipID Int           @id @default(autoincrement())
+model primaryfamilyrelationships {
   FamilyMemberID Int
-  ClubMemberID   Int           @db.UnsignedInt
-  Relationship   String        @db.VarChar(45)
-  familymembers  familymembers @relation(fields: [FamilyMemberID], references: [FamilyMemberID], map: "FamilyRelationships_ibfk_1")
-  clubmembers    clubmembers   @relation(fields: [ClubMemberID], references: [ClubMemberID], map: "fk_ClubMemberID_FamilyRelationships")
+  ClubMemberID   Int                                      @db.UnsignedInt
+  Relationship   primaryfamilyrelationships_Relationship?
+  familymembers  familymembers                            @relation(fields: [FamilyMemberID], references: [FamilyMemberID], map: "PrimaryFamilyRelationships_ibfk_1")
+  clubmembers    clubmembers                              @relation(fields: [ClubMemberID], references: [ClubMemberID], map: "fk_ClubMemberID_FamilyRelationships")
 
-  @@index([FamilyMemberID], map: "FamilyMemberID")
+  @@id([FamilyMemberID, ClubMemberID])
   @@index([ClubMemberID], map: "fk_ClubMemberID_FamilyRelationships")
 }
 
 model locations {
-  Name            String            @db.VarChar(45)
-  MaxCapacity     Int
-  Phone           String            @db.VarChar(12)
-  Address         String            @db.VarChar(45)
+  Name            String?           @db.VarChar(45)
+  MaxCapacity     Int?
+  Phone           String?           @db.VarChar(12)
+  Address         String?           @db.VarChar(45)
   City            String?           @db.VarChar(255)
-  Province        String            @db.VarChar(45)
-  PostalCode      String            @db.VarChar(45)
-  WebAddress      String            @db.VarChar(45)
-  Type            locations_Type
+  Province        String?           @db.VarChar(45)
+  PostalCode      String?           @db.VarChar(45)
+  WebAddress      String?           @db.VarChar(45)
+  Type            locations_Type?
   LocationID      Int               @id @default(autoincrement())
-  familymembers   familymembers[]
+  clubmembers     clubmembers[]
   personnel       personnel[]
   personnelroles  personnelroles[]
-  session         session[]
+  sessions        sessions[]
   teaminformation teaminformation[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model payments {
-  ClubMemberID        Int               @db.UnsignedInt
-  PaymentDate         DateTime          @db.Date
-  PaymentID           Int               @id @default(autoincrement())
-  Amount              Float
-  Method              payments_Method
-  MembershipStartDate DateTime          @db.Date
-  MembershipEndDate   DateTime          @db.Date
-  InstallmentNumber   Int
-  ExcessDonation      Float?            @default(0)
-  IsActive            payments_IsActive
-  clubmembers         clubmembers       @relation(fields: [ClubMemberID], references: [ClubMemberID], map: "fk_ClubMemberID")
+  ClubMemberID        Int?             @db.UnsignedInt
+  PaymentDate         DateTime?        @db.Date
+  PaymentID           Int              @id @default(autoincrement())
+  Amount              Float?
+  Method              payments_Method?
+  MembershipStartDate DateTime?        @db.Date
+  MembershipEndDate   DateTime?        @db.Date
+  InstallmentNumber   Int?
+  ExcessDonation      Float?           @default(0)
+  clubmembers         clubmembers?     @relation(fields: [ClubMemberID], references: [ClubMemberID], onDelete: Restrict, map: "fk_ClubMemberID")
 
   @@index([ClubMemberID], map: "fk_ClubMemberID_idx")
 }
 
 model personnel {
-  PersonnelID     Int               @id @default(autoincrement())
-  FirstName       String            @db.VarChar(45)
-  LastName        String            @db.VarChar(45)
-  Mandate         personnel_Mandate
-  Role            String            @db.VarChar(45)
-  DOB             DateTime          @db.Date
-  SIN             String            @unique(map: "sin_UNIQUE") @db.VarChar(11)
-  MedicareNumber  String            @unique(map: "medicalnumber_UNIQUE") @db.VarChar(10)
-  Phone           String            @db.VarChar(12)
-  Address         String            @db.VarChar(45)
-  City            String            @db.VarChar(45)
-  Province        String            @db.VarChar(45)
-  PostalCode      String            @db.VarChar(45)
-  Email           String            @unique(map: "Email_UNIQUE") @db.VarChar(45)
-  LocationID      Int
-  locations       locations         @relation(fields: [LocationID], references: [LocationID], map: "fk_personnel_location")
-  personnelroles  personnelroles[]
-  teaminformation teaminformation[]
+  PersonnelID    Int                @id @unique(map: "PersonnelID_UNIQUE") @default(autoincrement())
+  FirstName      String?            @db.VarChar(45)
+  LastName       String?            @db.VarChar(45)
+  Mandate        personnel_Mandate?
+  DOB            DateTime?          @db.Date
+  SIN            String?            @unique(map: "sin_UNIQUE") @db.VarChar(11)
+  MedicareNumber String?            @unique(map: "medicalnumber_UNIQUE") @db.VarChar(10)
+  Phone          String?            @db.VarChar(12)
+  Address        String?            @db.VarChar(45)
+  City           String?            @db.VarChar(45)
+  Province       String?            @db.VarChar(45)
+  PostalCode     String?            @db.VarChar(45)
+  Email          String?            @unique(map: "Email_UNIQUE") @db.VarChar(45)
+  LocationID     Int?
+  locations      locations?         @relation(fields: [LocationID], references: [LocationID], onDelete: Restrict, map: "fk_personnel_location")
+  personnelroles personnelroles?
 
   @@index([LocationID], map: "fk_personnel_location")
 }
 
 model personnelroles {
-  PersonnelID Int
-  LocationID  Int
-  Role        personnelroles_Role
-  StartDate   DateTime            @db.Date
-  EndDate     DateTime?           @db.Date
-  personnel   personnel           @relation(fields: [PersonnelID], references: [PersonnelID], onDelete: NoAction, onUpdate: NoAction, map: "PersonnelRoles_ibfk_1")
-  locations   locations           @relation(fields: [LocationID], references: [LocationID], onDelete: NoAction, onUpdate: NoAction, map: "PersonnelRoles_ibfk_2")
+  PersonnelID     Int                  @unique(map: "PersonnelID_UNIQUE")
+  LocationID      Int
+  Role            personnelroles_Role?
+  StartDate       DateTime             @db.Date
+  EndDate         DateTime?            @db.Date
+  personnel       personnel            @relation(fields: [PersonnelID], references: [PersonnelID], onDelete: NoAction, onUpdate: NoAction, map: "PersonnelRoles_ibfk_1")
+  locations       locations            @relation(fields: [LocationID], references: [LocationID], onDelete: NoAction, onUpdate: NoAction, map: "PersonnelRoles_ibfk_2")
+  teaminformation teaminformation[]
 
-  @@id([PersonnelID, LocationID, Role, StartDate])
+  @@id([PersonnelID, LocationID, StartDate])
   @@index([LocationID], map: "LocationID")
 }
 
 model playerslist {
-  ClubMemberID    Int              @db.UnsignedInt
-  TeamID          Int
-  Role            playerslist_Role
-  clubmembers     clubmembers      @relation(fields: [ClubMemberID], references: [ClubMemberID], onDelete: NoAction, onUpdate: NoAction, map: "PlayersList_ibfk_1")
-  teaminformation teaminformation  @relation(fields: [TeamID], references: [TeamID], onDelete: NoAction, onUpdate: NoAction, map: "PlayersList_ibfk_2")
+  ClubMemberID    Int               @db.UnsignedInt
+  TeamID          Int?
+  Role            playerslist_Role?
+  SessionID       Int
+  sessions        sessions          @relation(fields: [SessionID], references: [SessionID], onDelete: NoAction, onUpdate: NoAction, map: "PlayersList_ibfk_1")
+  teaminformation teaminformation?  @relation(fields: [TeamID], references: [TeamID], onDelete: NoAction, onUpdate: NoAction, map: "PlayersList_ibfk_2")
+  clubmembers     clubmembers       @relation(fields: [ClubMemberID], references: [ClubMemberID], onDelete: NoAction, onUpdate: NoAction, map: "PlayersList_ibfk_3")
 
-  @@id([ClubMemberID, TeamID])
+  @@id([ClubMemberID, SessionID])
+  @@index([SessionID], map: "SessionID")
   @@index([TeamID], map: "TeamID")
 }
 
-model secondaryfamilymember {
-  SecondaryID  Int                                 @id
-  FirstName    String?                             @db.VarChar(50)
-  LastName     String?                             @db.VarChar(50)
-  Phone        String?                             @db.VarChar(20)
-  Relationship secondaryfamilymember_Relationship?
+model secondaryfamilymembers {
+  SecondaryID                  Int                            @id @default(autoincrement()) @db.UnsignedInt
+  FirstName                    String?                        @db.VarChar(50)
+  LastName                     String?                        @db.VarChar(50)
+  Phone                        String?                        @db.VarChar(20)
+  secondaryfamilyrelationships secondaryfamilyrelationships[]
 }
 
-model session {
-  SessionID                                        Int                  @id @default(autoincrement())
-  LocationID                                       Int?
-  DateTime                                         DateTime?            @db.DateTime(0)
-  Team1ID                                          Int?
-  Team2ID                                          Int?
-  ScoreTeam1                                       Int?
-  ScoreTeam2                                       Int?
-  GenderMatch                                      session_GenderMatch?
-  locations                                        locations?           @relation(fields: [LocationID], references: [LocationID], onDelete: NoAction, onUpdate: NoAction, map: "Session_ibfk_1")
-  teaminformation_session_Team1IDToteaminformation teaminformation?     @relation("session_Team1IDToteaminformation", fields: [Team1ID], references: [TeamID], onDelete: NoAction, onUpdate: NoAction, map: "Session_ibfk_2")
-  teaminformation_session_Team2IDToteaminformation teaminformation?     @relation("session_Team2IDToteaminformation", fields: [Team2ID], references: [TeamID], onDelete: NoAction, onUpdate: NoAction, map: "Session_ibfk_3")
+model secondaryfamilyrelationships {
+  ClubMemberID           Int                                        @db.UnsignedInt
+  SecondaryID            Int                                        @db.UnsignedInt
+  Relationship           secondaryfamilyrelationships_Relationship?
+  clubmembers            clubmembers                                @relation(fields: [ClubMemberID], references: [ClubMemberID], onDelete: NoAction, onUpdate: NoAction, map: "fk_clubMember_secondaryRelationship")
+  secondaryfamilymembers secondaryfamilymembers                     @relation(fields: [SecondaryID], references: [SecondaryID], onDelete: NoAction, onUpdate: NoAction, map: "fk_secondaryFamily_secondaryRelationship")
 
-  @@index([LocationID], map: "LocationID")
-  @@index([Team1ID], map: "Team1ID")
-  @@index([Team2ID], map: "Team2ID")
+  @@id([ClubMemberID, SecondaryID])
+  @@index([SecondaryID], map: "fk_secondaryFamily_secondaryRelationship_idx")
+}
+
+model sessions {
+  SessionID                                         Int                   @id @default(autoincrement())
+  LocationID                                        Int?
+  DateTime                                          DateTime?             @db.DateTime(0)
+  Team1ID                                           Int?
+  Team2ID                                           Int?
+  ScoreTeam1                                        Int?
+  ScoreTeam2                                        Int?
+  GenderMatch                                       sessions_GenderMatch?
+  Type                                              sessions_Type?
+  playerslist                                       playerslist[]
+  locations                                         locations?            @relation(fields: [LocationID], references: [LocationID], onDelete: NoAction, onUpdate: NoAction, map: "fk_location_session")
+  teaminformation_sessions_Team1IDToteaminformation teaminformation?      @relation("sessions_Team1IDToteaminformation", fields: [Team1ID], references: [TeamID], onDelete: NoAction, onUpdate: NoAction, map: "fk_team1_session")
+  teaminformation_sessions_Team2IDToteaminformation teaminformation?      @relation("sessions_Team2IDToteaminformation", fields: [Team2ID], references: [TeamID], onDelete: NoAction, onUpdate: NoAction, map: "fk_team2_session")
+
+  @@index([LocationID], map: "fk_location_session")
+  @@index([Team1ID], map: "fk_team1_session_idx")
+  @@index([Team2ID], map: "fk_team2_session_idx")
 }
 
 model teaminformation {
-  TeamID                                   Int                    @id @default(autoincrement())
-  TeamName                                 String                 @db.VarChar(45)
-  Gender                                   teaminformation_Gender
-  CaptinName                               String                 @db.VarChar(45)
-  LocationID                               Int
-  CoachID                                  Int
-  clubmembers                              clubmembers[]
-  playerslist                              playerslist[]
-  session_session_Team1IDToteaminformation session[]              @relation("session_Team1IDToteaminformation")
-  session_session_Team2IDToteaminformation session[]              @relation("session_Team2IDToteaminformation")
-  locations                                locations              @relation(fields: [LocationID], references: [LocationID], map: "TeamInformation_ibfk_1")
-  personnel                                personnel              @relation(fields: [CoachID], references: [PersonnelID], map: "fk_personnelID_teams")
+  TeamID                                     Int                     @id @default(autoincrement())
+  TeamName                                   String?                 @db.VarChar(45)
+  Gender                                     teaminformation_Gender?
+  CaptainName                                String?                 @db.VarChar(45)
+  LocationID                                 Int?
+  CoachID                                    Int?
+  playerslist                                playerslist[]
+  sessions_sessions_Team1IDToteaminformation sessions[]              @relation("sessions_Team1IDToteaminformation")
+  sessions_sessions_Team2IDToteaminformation sessions[]              @relation("sessions_Team2IDToteaminformation")
+  personnelroles                             personnelroles?         @relation(fields: [CoachID], references: [PersonnelID], onDelete: NoAction, onUpdate: NoAction, map: "fk_coachID_teamInfo")
+  locations                                  locations?              @relation(fields: [LocationID], references: [LocationID], onDelete: NoAction, onUpdate: NoAction, map: "fk_location_teamInfo")
 
-  @@index([LocationID], map: "LocationID")
-  @@index([CoachID], map: "fk_personnelID_teams")
+  @@index([CoachID], map: "fk_coachID_teamInfo")
+  @@index([LocationID], map: "fk_location_teamInfo")
 }
-//-----------------------TILL HERE-----------------------
-enum teaminformation_Gender {
-  Boys
-  Girls
+
+model emaillog {
+  LogID          Int       @id @default(autoincrement())
+  EmailDate      DateTime? @default(now()) @db.DateTime(0)
+  SenderEmail    String?   @db.VarChar(255)
+  RecipientEmail String?   @db.VarChar(255)
+  CCList         String?   @db.Text
+  EmailSubject   String?   @db.VarChar(255)
+  BodyPreview    String?   @db.VarChar(100)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------------------------------------------------------------------------
 
 enum personnelroles_Role {
   Administrator
   Captain
   Coach
   Assistant_Coach @map("Assistant Coach")
+  General_Manager @map("General Manager")
+  Deputy_Manager  @map("Deputy Manager")
+  Treasurer
+  Secretary
   Other
 }
 
@@ -218,27 +255,40 @@ enum playerslist_Role {
   Serving_Specialist   @map("Serving Specialist")
 }
 
-enum personnel_Mandate {
-  Volunteer
-  Salaried
-}
-
-enum secondaryfamilymember_Relationship {
+enum primaryfamilyrelationships_Relationship {
   Father
   Mother
   Grandfather
   Grandmother
   Uncle
-  Aunt
+  Ant
   Tutor
   Partner
   Friend
   Other
 }
 
-enum familymembers_Status {
-  Primary
-  Secondary
+enum secondaryfamilyrelationships_Relationship {
+  Father
+  Mother
+  Grandfather
+  Grandmother
+  Uncle
+  Ant
+  Tutor
+  Partner
+  Friend
+  Other
+}
+
+enum teaminformation_Gender {
+  Male
+  Female
+}
+
+enum personnel_Mandate {
+  Volunteer
+  Salaried
 }
 
 enum payments_Method {
@@ -247,9 +297,9 @@ enum payments_Method {
   Cash
 }
 
-enum session_GenderMatch {
-  T
-  F
+enum sessions_GenderMatch {
+  Male
+  Female
 }
 
 enum locations_Type {
@@ -257,12 +307,17 @@ enum locations_Type {
   Branch
 }
 
-enum payments_IsActive {
-  Active
-  Inactive
+enum sessions_Type {
+  Game
+  Training
 }
 
 enum clubmembers_Status {
   Active
   Inactive
+}
+
+enum clubmembers_Gender {
+  Male
+  Female
 }

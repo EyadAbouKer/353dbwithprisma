@@ -11,7 +11,6 @@ import {
 
 export default async function Personnel() {
   const personnel = await prisma.personnel.findMany();
-  // console.log(personnel);
 
   const allPersonnel = personnel.map((person) => (
     <TableRow key={person.PersonnelID}>
@@ -19,7 +18,6 @@ export default async function Personnel() {
       <TableCell>{person.FirstName}</TableCell>
       <TableCell>{person.LastName}</TableCell>
       <TableCell>{person.Mandate}</TableCell>
-      <TableCell>{person.Role}</TableCell>
       <TableCell>{person.DOB.toISOString().split('T')[0]}</TableCell>
       <TableCell>{person.SIN}</TableCell>
       <TableCell>{person.MedicareNumber}</TableCell>
@@ -42,7 +40,6 @@ export default async function Personnel() {
             <TableHead>First Name</TableHead>
             <TableHead>Last Name</TableHead>
             <TableHead>Mandate</TableHead>
-            <TableHead>Role</TableHead>
             <TableHead>Date of Birth</TableHead>
             <TableHead>SIN</TableHead>
             <TableHead>Medicare Number</TableHead>

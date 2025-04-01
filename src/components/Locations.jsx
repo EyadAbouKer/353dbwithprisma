@@ -16,15 +16,15 @@ export default async function Locations() {
   const allLocations = locations.map((location) => (
     <TableRow key={location.LocationID}>
       <TableCell>{location.LocationID}</TableCell>
-      <TableCell>{location.Name}</TableCell>
-      <TableCell>{location.MaxCapacity}</TableCell>
-      <TableCell>{location.Phone}</TableCell>
-      <TableCell>{location.Address}</TableCell>
+      <TableCell>{location.Name ?? "N/A"}</TableCell>
+      <TableCell>{location.MaxCapacity ?? "N/A"}</TableCell>
+      <TableCell>{location.Phone ?? "N/A"}</TableCell>
+      <TableCell>{location.Address ?? "N/A"}</TableCell>
       <TableCell>{location.City ?? "N/A"}</TableCell>
-      <TableCell>{location.Province}</TableCell>
-      <TableCell>{location.PostalCode}</TableCell>
-      <TableCell>{location.WebAddress}</TableCell>
-      <TableCell>{location.Type}</TableCell>
+      <TableCell>{location.Province ?? "N/A"}</TableCell>
+      <TableCell>{location.PostalCode ?? "N/A"}</TableCell>
+      <TableCell>{location.WebAddress ?? "N/A"}</TableCell>
+      <TableCell>{location.Type ?? "N/A"}</TableCell>
     </TableRow>
   ));
 

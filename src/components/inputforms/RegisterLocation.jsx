@@ -37,6 +37,7 @@ export default function RegisterLocation() {
   function onSubmit(values) {
     try {
       console.log(values);
+      
       //Log values to the DB
       
 

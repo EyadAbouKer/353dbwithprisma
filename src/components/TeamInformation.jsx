@@ -10,37 +10,44 @@ import {
 } from "@/components/ui/table";
 
 export default async function TeamInformation() {
-  const teams = await prisma.teaminformation.findMany();
-  // console.log(teams);
+  const teams = await prisma.teaminformation.findMany({
+    include: {
+      personnelroles: true,
+      locations: true,
+    }
+  });
 
   const allTeams = teams.map((team) => (
     <TableRow key={team.TeamID}>
       <TableCell>{team.TeamID}</TableCell>
       <TableCell>{team.TeamName}</TableCell>
       <TableCell>{team.Gender}</TableCell>
-      <TableCell>{team.CaptinName}</TableCell>
-      <TableCell>{team.LocationID}</TableCell>
-      <TableCell>{team.CoachID}</TableCell>
+      <TableCell>{team.CaptainName}</TableCell>
+      <TableCell>{team.locations?.LocationName || 'N/A'}</TableCell>
+      <TableCell>{team.personnelroles?.PersonnelName || 'N/A'}</TableCell>
     </TableRow>
   ));
 
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Team ID</TableHead>
-            <TableHead>Team Name</TableHead>
-            <TableHead>Gender</TableHead>
-            <TableHead>Captain Name</TableHead>
-            <TableHead>Location ID</TableHead>
-            <TableHead>Coach ID</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allTeams}
-        </TableBody>
-      </Table>
+    <div className="p-4">
+      {/* <h2 className="text-2xl font-bold mb-4">Team Information</h2> */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Team ID</TableHead>
+              <TableHead>Team Name</TableHead>
+              <TableHead>Gender</TableHead>
+              <TableHead>Captain Name</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Coach Name</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {allTeams}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

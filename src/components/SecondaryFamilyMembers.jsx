@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/table";
 
 export default async function SecondaryFamilyMembers() {
-  const secondaryMembers = await prisma.secondaryfamilymember.findMany();
-  // console.log(secondaryMembers);
+  const secondaryMembers = await prisma.secondaryfamilymembers.findMany({
+    include: {
+      secondaryfamilyrelationships: true,
+    },
+  });
 
   const allSecondaryMembers = secondaryMembers.map((member) => (
     <TableRow key={member.SecondaryID}>
@@ -19,7 +22,9 @@ export default async function SecondaryFamilyMembers() {
       <TableCell>{member.FirstName ?? "N/A"}</TableCell>
       <TableCell>{member.LastName ?? "N/A"}</TableCell>
       <TableCell>{member.Phone ?? "N/A"}</TableCell>
-      <TableCell>{member.Relationship ?? "N/A"}</TableCell>
+      <TableCell>
+        {member.secondaryfamilyrelationships.map(rel => rel.RelationType).join(", ") || "N/A"}
+      </TableCell>
     </TableRow>
   ));
 

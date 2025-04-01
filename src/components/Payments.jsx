@@ -24,7 +24,6 @@ export default async function Payments() {
       <TableCell>{payment.MembershipEndDate.toISOString().split('T')[0]}</TableCell>
       <TableCell>{payment.InstallmentNumber}</TableCell>
       <TableCell>${payment.ExcessDonation?.toFixed(2) ?? "0.00"}</TableCell>
-      <TableCell>{payment.IsActive}</TableCell>
     </TableRow>
   ));
 
@@ -42,7 +41,6 @@ export default async function Payments() {
             <TableHead>Membership End</TableHead>
             <TableHead>Installment #</TableHead>
             <TableHead>Excess Donation</TableHead>
-            <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
