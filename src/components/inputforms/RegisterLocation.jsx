@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { addLocation } from "@/actions/actions"
 
 const formSchema = z.object({
   Name: z.string().min(1).optional(),
@@ -34,12 +35,16 @@ export default function RegisterLocation() {
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     try {
-      console.log(values);
+      console.log("Form values:", values);
+      const result = await addLocation(values);
       
-      //Log values to the DB
-      
+      if (result.success) {
+        toast.success("Location added successfully!");
+      } else {
+        toast.error("Failed to add location: " + result.error);
+      }
 
       toast(
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
