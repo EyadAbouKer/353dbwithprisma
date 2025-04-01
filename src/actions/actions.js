@@ -21,7 +21,10 @@ export async function addLocation(formData) {
           Type: formData.Type,
         },
       })
-      .then(console.log("Location added to the database", result));
+      .then(response => {
+        console.log("Location added to the database", response);
+        return response;
+      });
     return { success: true, data: result };
   } catch (error) {
     console.error("Error adding location:", error);
