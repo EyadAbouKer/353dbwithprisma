@@ -8,17 +8,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
+
 
 export default async function Personnel() {
   const personnel = await prisma.personnel.findMany();
 
   const allPersonnel = personnel.map((person) => (
     <TableRow key={person.PersonnelID}>
+      <TableCell>
+        <Button>Edit</Button>
+      </TableCell>
+      <TableCell>
+        <Button>Delete</Button>
+      </TableCell>
       <TableCell>{person.PersonnelID}</TableCell>
       <TableCell>{person.FirstName}</TableCell>
       <TableCell>{person.LastName}</TableCell>
       <TableCell>{person.Mandate}</TableCell>
-      <TableCell>{person.DOB ? person.DOB.toISOString().split('T')[0] : "N/A"}</TableCell>
+      <TableCell>
+        {person.DOB ? person.DOB.toISOString().split("T")[0] : "N/A"}
+      </TableCell>
       <TableCell>{person.SIN}</TableCell>
       <TableCell>{person.MedicareNumber}</TableCell>
       <TableCell>{person.Phone}</TableCell>
@@ -52,9 +62,7 @@ export default async function Personnel() {
             <TableHead>Location ID</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {allPersonnel}
-        </TableBody>
+        <TableBody>{allPersonnel}</TableBody>
       </Table>
     </div>
   );

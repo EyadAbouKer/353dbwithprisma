@@ -8,6 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
+
 
 export default async function PersonnelRoles() {
   const personnelRoles = await prisma.personnelroles.findMany({

@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
 
 export default async function Locations() {
   const locations = await prisma.locations.findMany();
@@ -15,6 +16,12 @@ export default async function Locations() {
 
   const allLocations = locations.map((location) => (
     <TableRow key={location.LocationID}>
+      <TableCell>
+        <Button>Edit</Button>
+      </TableCell>
+      <TableCell>
+        <Button>Delete</Button>
+      </TableCell>
       <TableCell>{location.LocationID}</TableCell>
       <TableCell>{location.Name ?? "N/A"}</TableCell>
       <TableCell>{location.MaxCapacity ?? "N/A"}</TableCell>
@@ -45,9 +52,7 @@ export default async function Locations() {
             <TableHead>Type</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {allLocations}
-        </TableBody>
+        <TableBody>{allLocations}</TableBody>
       </Table>
     </div>
   );

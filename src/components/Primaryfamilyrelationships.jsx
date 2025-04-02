@@ -8,6 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
+
 
 export default async function Primaryfamilyrelationships() {
   const familyRelationships = await prisma.primaryfamilyrelationships.findMany({

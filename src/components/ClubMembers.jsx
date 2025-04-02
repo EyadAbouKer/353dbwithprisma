@@ -8,16 +8,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
 
 export default async function ClubMembers() {
   const clubMembers = await prisma.clubmembers.findMany();
 
   const allClubMembers = clubMembers.map((member) => (
     <TableRow key={member.ClubMemberID}>
+      <TableCell>
+        <Button>Edit</Button>
+      </TableCell>
+      <TableCell>
+        <Button>Delete</Button>
+      </TableCell>
       <TableCell>{member.ClubMemberID}</TableCell>
       <TableCell>{member.FirstName}</TableCell>
       <TableCell>{member.LastName}</TableCell>
-      <TableCell>{member.DOB ? member.DOB.toISOString().split("T")[0] : "N/A"}</TableCell>
+      <TableCell>
+        {member.DOB ? member.DOB.toISOString().split("T")[0] : "N/A"}
+      </TableCell>
       <TableCell>{member.Height ?? "N/A"}</TableCell>
       <TableCell>{member.Weight ?? "N/A"}</TableCell>
       <TableCell>{member.SIN}</TableCell>
@@ -31,7 +40,7 @@ export default async function ClubMembers() {
       <TableCell>{member.Gender}</TableCell>
       <TableCell>{member.LocationID}</TableCell>
     </TableRow>
-  ))
+  ));
 
   return (
     <div>
@@ -56,9 +65,7 @@ export default async function ClubMembers() {
             <TableHead>Location ID</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {allClubMembers}
-        </TableBody>
+        <TableBody>{allClubMembers}</TableBody>
       </Table>
     </div>
   );
