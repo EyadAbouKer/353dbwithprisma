@@ -10,7 +10,7 @@ import Link from "next/link"
 
 export default function Navbar() {
 return (
-    <NavigationMenu className="p-4">
+    <NavigationMenu className="p-4 flex justify-center">
         <NavigationMenuList>
             <NavigationMenuItem>
                 <NavigationMenuTrigger>
@@ -26,7 +26,7 @@ return (
                     {/* <Link href="/addentries">Add new</Link> */}
                     Add new
                 </NavigationMenuTrigger>
-                <NavigationMenuContent>
+                <NavigationMenuContent className="w-64 flex justify-center">
                     {/* <NavigationMenuLink href='/'>Club Member?</NavigationMenuLink> */}
                     <NavigationMenuLink href='/addfamilymember'>Family Member</NavigationMenuLink>
                     <NavigationMenuLink href='/addlocation'>Location</NavigationMenuLink>
@@ -39,7 +39,7 @@ return (
 
             <NavigationMenuItem>
                 <NavigationMenuTrigger>
-                    <Link href="/">Entry3</Link>
+                    <Link href="/emails_sent">Emails Sent</Link>
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                     {/* <NavigationMenuLink>Entry3 Content</NavigationMenuLink> */}

@@ -21,7 +21,7 @@ export async function addLocation(formData) {
           Type: formData.Type,
         },
       })
-      .then(response => {
+      .then((response) => {
         console.log("Location added to the database", response);
         return response;
       });
@@ -59,13 +59,17 @@ export async function addFamilyMember(formData) {
         Province: formData.Province,
         Postalcode: formData.PostalCode,
         Phone: formData.Phone,
-        DOB: formData.DOB
+        DOB: formData.DOB,
       },
     });
 
     console.log("Family member added to the database:", result);
-    if (result){
-        update_ClubMember_FamilyMember_Relationship(result.FamilyMemberID, formData.ClubMemberID, formData.Relationship);
+    if (result) {
+      update_ClubMember_FamilyMember_Relationship(
+        result.FamilyMemberID,
+        formData.ClubMemberID,
+        formData.Relationship
+      );
     }
     return { success: true, data: result };
   } catch (error) {
@@ -74,25 +78,26 @@ export async function addFamilyMember(formData) {
   }
 }
 
-async function update_ClubMember_FamilyMember_Relationship(familyMemberID, ClubMemberID, Realtionship){
-    try {
-        const result = await prisma.primaryfamilyrelationships.create({
-        data: {
-            FamilyMemberID: parseInt(familyMemberID),
-            ClubMemberID: parseInt(ClubMemberID),
-            Relationship: Realtionship,
-        },
-        });
-        console.log("Family relationship added to the database", result);
-        return { success: true, data: result };
-    } catch (error) {
-        console.error("Error adding family relationship:", error);
-        return { success: false, error: error.message };
-    }
+async function update_ClubMember_FamilyMember_Relationship(
+  familyMemberID,
+  ClubMemberID,
+  Realtionship
+) {
+  try {
+    const result = await prisma.primaryfamilyrelationships.create({
+      data: {
+        FamilyMemberID: parseInt(familyMemberID),
+        ClubMemberID: parseInt(ClubMemberID),
+        Relationship: Realtionship,
+      },
+    });
+    console.log("Family relationship added to the database", result);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Error adding family relationship:", error);
+    return { success: false, error: error.message };
+  }
 }
-
-
-
 
 // __________________________________________PAYMENTS__________________________________________________
 // someone come to pay --> check ID if valid (can it be checked without going to the db?)
@@ -126,6 +131,175 @@ export async function addPayment(formData) {
     return { success: true, data: result };
   } catch (error) {
     console.error("Error adding payment:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+// __________________________________________EMAILS__________________________________________________
+// to send a weekly email to each club member associated with that game
+// look at the current date of when it is Sunday
+// start the trigger --> get incoming games or sessions
+// get players associated with that game or session
+// get emails of those players
+// fetch other data from the team formations and personnel tables
+// structure data into a readable format
+// send email to each player with the game details (show them in txt file)
+// save output to emails table
+
+export async function generate_and_send_emails_on_sunday() {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+    const session = await prisma.sessions.findMany({
+      where: {
+        DateTime: {
+          gte: today,
+          lt: nextWeek,
+        },
+      },
+      include: {
+        locations: true,
+        teaminformation_sessions_Team1IDToteaminformation: true,
+        teaminformation_sessions_Team2IDToteaminformation: true,
+      },
+    });
+
+    if (session.length === 0) {
+      return { success: false, message: "No session found for today." };
+    }
+
+    const emails = await assembleEmail(session);
+    return emails;
+
+  } catch (error) {
+    console.error("Error generating and sending emails:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function assembleEmail(sessions) {
+  let emails = [];
+  for (const session of sessions) {
+    let date = session.DateTime.toString().split("T")[0];
+    let time = session.DateTime.toString().split("T")[1].split(".")[0];
+    let coach1Name =
+      session.teaminformation_sessions_Team1IDToteaminformation.CaptainName;
+    let coach1Email = coach1Name + "@gmail.com";
+    let coach2Name =
+      session.teaminformation_sessions_Team2IDToteaminformation.CaptainName;
+    let coach2Email = coach2Name + "@gmail.com";
+    let sessionType = session.Type;
+
+    let team1Name =
+      session.teaminformation_sessions_Team1IDToteaminformation.TeamName;
+    let team1ID = session.Team1ID;
+
+    let team2Name =
+      session.teaminformation_sessions_Team2IDToteaminformation.TeamName;
+    let team2ID = session.Team2ID;
+
+    let locationID = session.LocationID;
+    let location = await prisma.locations.findUnique({
+      where: { LocationID: locationID },
+    });
+
+    let playersTeam1 = await prisma.playerslist.findMany({
+      where: { TeamID: team1ID },
+    });
+    let playersTeam2 = await prisma.playerslist.findMany({
+      where: { TeamID: team2ID },
+    });
+
+    let Header1 = `${team1Name} on ${date} ${time}) type: ${sessionType}`;
+    for (const player of playersTeam1) {
+      let playerID = player.ClubMemberID;
+      let PlayerInfo = await prisma.clubmembers.findUnique({
+        where: { ClubMemberID: playerID },
+      });
+      let firstName = PlayerInfo.FirstName;
+      let lastName = PlayerInfo.LastName;
+      let role = player.Role;
+      let playerEmail = firstName + "." + lastName + "@gmail.com";
+      let emailDate = new Date();
+      let senderEmail = "admin@vollyballclub.ca";
+      let Body1 = `${firstName} ${lastName}, playing ${role}
+                    lead by ${coach1Name}, you can reach him out at ${coach1Email}
+                    Type: ${sessionType}
+                    Location: ${location.Name}
+                    Address: ${location.Address}
+                    City: ${location.City}
+                    Province: ${location.Province}
+                    PostalCode: ${location.PostalCode}
+                    Phone: ${location.Phone}
+                    WebAddress: ${location.WebAddress}`;
+      let output = {
+        emailDate,
+        senderEmail,
+        playerEmail,
+        header: Header1,
+        body: Body1,
+      };
+      emails.push(output);
+    }
+
+    let Header2 = `${team2Name} on ${date} ${time}) type: ${sessionType}`;
+    for (const player of playersTeam2) {
+      let playerID = player.ClubMemberID;
+      let PlayerInfo = await prisma.clubmembers.findUnique({
+        where: { ClubMemberID: playerID },
+      });
+      let firstName = PlayerInfo.FirstName;
+      let lastName = PlayerInfo.LastName;
+      let role = player.Role;
+      let playerEmail = firstName + "." + lastName + "@gmail.com";
+      let emailDate = new Date();
+      let senderEmail = "admin@vollyballclub.ca";
+      let Body2 = `${firstName} ${lastName}, playing ${role}
+                    lead by ${coach2Name}, you can reach him out at ${coach2Email}
+                    Type: ${sessionType}
+                    Location: ${location.Name}
+                    Address: ${location.Address}
+                    City: ${location.City}
+                    Province: ${location.Province}
+                    PostalCode: ${location.PostalCode}
+                    Phone: ${location.Phone}
+                    WebAddress: ${location.WebAddress}`;
+      let output = {
+        emailDate,
+        senderEmail,
+        playerEmail,
+        header: Header2,
+        body: Body2,
+      };
+      emails.push(output);
+    }
+    // console.log(Body1, Body2);
+  }
+  // console.log("emails", emails);
+  return emails;
+}
+
+export async function saveEmailsToDatabase(emails) {
+  try {
+    const results = [];
+    for (const email of emails) {
+      const result = await prisma.emaillog.create({
+        data: {
+          EmailDate: email.emailDate,
+          SenderEmail: email.senderEmail,
+          RecipientEmail: email.playerEmail,
+          EmailSubject: email.header,
+          BodyPreview: email.body.substring(0, 99), // Preview of the body (first 100 characters)
+        }
+      });
+      results.push(result);
+    }
+    console.log("Emails saved to the database:", results);
+    return { success: true, data: results };
+  } catch (error) {
+    console.error("Error saving emails to database:", error);
     return { success: false, error: error.message };
   }
 }
