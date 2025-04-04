@@ -40,13 +40,13 @@ export default function Navbar() {
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="hover:bg-slate-100 transition-colors">
-            <Link href="/reports" className="text-slate-800 font-medium">Reports</Link>
+            <Link href="/" className="text-slate-800 font-medium">Reports</Link>
           </NavigationMenuTrigger>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="hover:bg-slate-100 transition-colors">
-            <Link href="/settings" className="text-slate-800 font-medium">Settings</Link>
+            <Link href="/" className="text-slate-800 font-medium">Settings</Link>
           </NavigationMenuTrigger>
         </NavigationMenuItem>
       </NavigationMenuList>
