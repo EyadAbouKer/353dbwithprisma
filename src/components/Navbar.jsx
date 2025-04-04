@@ -70,13 +70,13 @@ export default function Navbar() {
           </NavigationMenuTrigger>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
+        {/* <NavigationMenuItem>
           <NavigationMenuTrigger className="hover:bg-slate-100 transition-colors">
             <Link href="/" className="text-slate-800 font-medium">
               Settings
             </Link>
           </NavigationMenuTrigger>
-        </NavigationMenuItem>
+        </NavigationMenuItem> */}
       </NavigationMenuList>
     </NavigationMenu>
   );
