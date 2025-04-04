@@ -1,5 +1,6 @@
 "use server";
 
+import ClubMembers from "@/components/ClubMembers";
 import { PrismaClient } from "@prisma/client";
 import { parse } from "date-fns";
 const prisma = new PrismaClient();
@@ -172,7 +173,6 @@ export async function generate_and_send_emails_on_sunday() {
 
     const emails = await assembleEmail(session);
     return emails;
-
   } catch (error) {
     console.error("Error generating and sending emails:", error);
     return { success: false, error: error.message };
@@ -285,14 +285,17 @@ export async function saveEmailsToDatabase(emails) {
   try {
     const results = [];
     for (const email of emails) {
+      // Handle both weekly and monthly email formats
+      const emailData = {
+        EmailDate: email.emailDate || email.EmailDate,
+        SenderEmail: email.senderEmail || email.SenderEmail,
+        RecipientEmail: email.playerEmail || email.RecipientEmail,
+        EmailSubject: email.header || email.EmailSubject,
+        BodyPreview: (email.body || email.BodyPreview || "").substring(0, 99),
+      };
+
       const result = await prisma.emaillog.create({
-        data: {
-          EmailDate: email.emailDate,
-          SenderEmail: email.senderEmail,
-          RecipientEmail: email.playerEmail,
-          EmailSubject: email.header,
-          BodyPreview: email.body.substring(0, 99), // Preview of the body (first 100 characters)
-        }
+        data: emailData,
       });
       results.push(result);
     }
@@ -302,4 +305,51 @@ export async function saveEmailsToDatabase(emails) {
     console.error("Error saving emails to database:", error);
     return { success: false, error: error.message };
   }
+}
+
+export async function generate_and_send_emails_Monthly() {
+  try {
+    const eighteenYearsAgo = new Date();
+    eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+    const clubMembers = await prisma.clubmembers.findMany({
+      where: {
+        DOB: {
+          lte: eighteenYearsAgo,
+        },
+        Status: "Active",
+      },
+    });
+    // console.log("clubMembers", await assembleMonthlyEmail(clubMembers));
+    if (clubMembers[0].length === 0) {
+      return { success: false, message: "No club members found." };
+    }
+    const emails = await assembleMonthlyEmail(clubMembers);
+    console.log("emails", emails);
+    return emails;
+  } catch (error) {
+    console.error("Error generating and sending emails:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function assembleMonthlyEmail(clubMembers) {
+  const emails = [];
+  for (const clubMember of clubMembers) {
+    const email =
+      clubMember.FirstName + "." + clubMember.LastName + "@gmail.com";
+    const emailDate = new Date();
+    const senderEmail = "admin@gvolleyballclub.ca";
+    const Header = `Congrate you are turning 18 this month`;
+    const Body = `Dear ${clubMember.firstName} ${clubMember.lastName}, you are turning 18 this month, according to our policy, the age requierment is up till 18 years old, so you are not eligible to play in our club anymore. We wish you all the best in your future endeavors.
+    your account is decativated, please contact us if you have any questions`;
+    const output = {
+      EmailDate: emailDate,
+      SenderEmail: senderEmail,
+      RecipientEmail: email,
+      EmailSubject: Header,
+      BodyPreview: Body.substring(0, 99), // Preview of the body (first 100 characters)
+    };
+    emails.push(output);
+  }
+  return emails;
 }
