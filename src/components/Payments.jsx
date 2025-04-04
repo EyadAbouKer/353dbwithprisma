@@ -28,12 +28,12 @@ export default async function Payments() {
 
     return (
       <TableRow key={payment.PaymentID}>
-        <TableCell>
+        {/* <TableCell>
           <Button>Edit</Button>
         </TableCell>
         <TableCell>
           <Button>Delete</Button>
-        </TableCell>
+        </TableCell> */}
         <TableCell>{payment.PaymentID}</TableCell>
         <TableCell>{payment.ClubMemberID}</TableCell>
         <TableCell>

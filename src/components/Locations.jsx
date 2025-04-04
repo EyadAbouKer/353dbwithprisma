@@ -16,12 +16,12 @@ export default async function Locations() {
 
   const allLocations = locations.map((location) => (
     <TableRow key={location.LocationID}>
-      <TableCell>
+      {/* <TableCell>
         <Button>Edit</Button>
       </TableCell>
       <TableCell>
         <Button>Delete</Button>
-      </TableCell>
+      </TableCell> */}
       <TableCell>{location.LocationID}</TableCell>
       <TableCell>{location.Name ?? "N/A"}</TableCell>
       <TableCell>{location.MaxCapacity ?? "N/A"}</TableCell>

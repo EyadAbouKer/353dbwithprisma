@@ -19,12 +19,12 @@ export default async function FamilyMembers() {
 
   const allFamilyMembers = familyMembers.map((member) => (
     <TableRow key={member.FamilyMemberID}>
-      <TableCell>
+      {/* <TableCell>
         <Button>Edit</Button>
       </TableCell>
       <TableCell>
         <Button>Delete</Button>
-      </TableCell>
+      </TableCell> */}
       <TableCell>{member.FamilyMemberID}</TableCell>
       <TableCell>{member.FirstName}</TableCell>
       <TableCell>{member.LastName}</TableCell>

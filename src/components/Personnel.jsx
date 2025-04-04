@@ -16,12 +16,12 @@ export default async function Personnel() {
 
   const allPersonnel = personnel.map((person) => (
     <TableRow key={person.PersonnelID}>
-      <TableCell>
+      {/* <TableCell>
         <Button>Edit</Button>
       </TableCell>
       <TableCell>
         <Button>Delete</Button>
-      </TableCell>
+      </TableCell> */}
       <TableCell>{person.PersonnelID}</TableCell>
       <TableCell>{person.FirstName}</TableCell>
       <TableCell>{person.LastName}</TableCell>

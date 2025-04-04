@@ -15,12 +15,12 @@ export default async function ClubMembers() {
 
   const allClubMembers = clubMembers.map((member) => (
     <TableRow key={member.ClubMemberID}>
-      <TableCell>
+      {/* <TableCell>
         <Button>Edit</Button>
       </TableCell>
       <TableCell>
         <Button>Delete</Button>
-      </TableCell>
+      </TableCell> */}
       <TableCell>{member.ClubMemberID}</TableCell>
       <TableCell>{member.FirstName}</TableCell>
       <TableCell>{member.LastName}</TableCell>
