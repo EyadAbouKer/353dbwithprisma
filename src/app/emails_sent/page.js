@@ -18,6 +18,7 @@ export default function page() {
   const [tableData, setTableData] = useState([]);
   const [monthlyTableData, setMonthlyTableData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Calculate if both tables are visible
   const bothTablesVisible = !loading && tableData.length > 0 && monthlyTableData.length > 0;
@@ -48,13 +49,31 @@ export default function page() {
     }
   }
 
+  const handleSaveEmails = async (emails) => {
+    try {
+      await saveEmailsToDatabase(emails);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000); // Hide after 3 seconds
+    } catch (error) {
+      console.error("Error saving emails:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto p-8 max-w-7xl">
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-green-500 text-white px-6 py-3 rounded-md shadow-lg animate-fade-in-out text-lg font-medium">
+            Emails saved successfully!
+          </div>
+        </div>
+      )}
+      
       <h1 className="text-3xl font-bold text-center mb-8">Email Generation Dashboard</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-          <h2 className="text-xl font-semibold mb-3 text-center">Weekly Notifications</h2>
+          <h2 className="text-xl font-semibold mb-3 text-center">Weekly Notifications</h2> 
           <Button
             className="w-full bg-blue-600 hover:bg-blue-700"
             onClick={generateEmailsOnSunday}
@@ -135,8 +154,8 @@ export default function page() {
               <div className="border-t p-4 bg-gray-50 flex flex-col items-center gap-2 mt-auto">
                 <p className="text-sm text-gray-600 font-medium">Save these emails to the database?</p>
                 <Button 
-                  onClick={() => saveEmailsToDatabase(tableData)} 
-                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => handleSaveEmails(tableData)} 
+                  className="bg-blue-600 hover:bg-blue-700 relative"
                 >
                   Save to Database
                 </Button>
@@ -182,8 +201,8 @@ export default function page() {
               <div className="border-t p-4 bg-gray-50 flex flex-col items-center gap-2 mt-auto">
                 <p className="text-sm text-gray-600 font-medium">Save these emails to the database?</p>
                 <Button 
-                  onClick={() => saveEmailsToDatabase(monthlyTableData)} 
-                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => handleSaveEmails(monthlyTableData)} 
+                  className="bg-green-600 hover:bg-green-700 relative"
                 >
                   Save to Database
                 </Button>
