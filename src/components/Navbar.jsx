@@ -40,7 +40,7 @@ export default function Navbar() {
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="hover:bg-slate-100 transition-colors">
-            <Link href="/" className="text-slate-800 font-medium">Reports</Link>
+            <Link href="/reports" className="text-slate-800 font-medium">Reports</Link>
           </NavigationMenuTrigger>
         </NavigationMenuItem>
 
