@@ -353,3 +353,16 @@ async function assembleMonthlyEmail(clubMembers) {
   }
   return emails;
 }
+
+
+// __________________________________________Queries____________________________________________
+export async function passQuerytoPrisma(query) {
+  try {
+    const result = await prisma.$queryRawUnsafe(query);
+    console.log("Query result:", result);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Error executing query:", error);
+    return { success: false, error: error.message };
+  }
+}
