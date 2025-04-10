@@ -3,14 +3,30 @@
 import React, { useState } from 'react'
 import { passQuerytoPrisma } from "@/actions/actions"
 
+// Custom serializer to handle BigInt
+const serializer = (key, value) => {
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
+  return value;
+}
+
 export default function Page() {
   const [inputValue, setInputValue] = useState('')
+  const [queryResult, setQueryResult] = useState(null)
+  const [error, setError] = useState(null)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle submission logic here
-    console.log('Submitted:', inputValue)
-    passQuerytoPrisma(inputValue)
+    setError(null)
+    setQueryResult(null)
+    
+    const response = await passQuerytoPrisma(inputValue)
+    if (response.success) {
+      setQueryResult(response.data)
+    } else {
+      setError(response.error)
+    }
   }
 
   return (
@@ -31,6 +47,21 @@ export default function Page() {
           <div style={styles.buttonGlow}></div>
         </button>
       </form>
+      
+      {error && (
+        <div style={styles.error}>
+          Error: {error}
+        </div>
+      )}
+      
+      {queryResult && (
+        <div style={styles.results}>
+          <h3>Query Results:</h3>
+          <pre style={styles.resultContent}>
+            {JSON.stringify(queryResult, serializer, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   )
 }
@@ -114,5 +145,26 @@ const styles = {
       '&:hover': {
         opacity: 0.3,
       },
+    },
+    error: {
+      marginTop: '20px',
+      padding: '10px',
+      color: '#721c24',
+      backgroundColor: '#f8d7da',
+      borderRadius: '4px',
+      border: '1px solid #f5c6cb',
+    },
+    results: {
+      marginTop: '20px',
+      padding: '20px',
+      backgroundColor: '#f8f9fa',
+      borderRadius: '8px',
+      border: '1px solid rgba(0, 163, 255, 0.2)',
+    },
+    resultContent: {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-all',
+      fontSize: '14px',
+      fontFamily: 'monospace',
     },
   }
